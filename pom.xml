@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+           http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.dynamissky</groupId>
+  <artifactId>dynamissky-parent</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>DynamisSky — Parent</name>
+
+  <modules>
+    <module>dynamissky-api</module>
+    <module>dynamissky-core</module>
+    <module>dynamissky-vulkan</module>
+    <module>dynamissky-test</module>
+    <module>dynamissky-bench</module>
+  </modules>
+
+  <properties>
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Ecosystem versions -->
+    <vectrix.version>1.10.9</vectrix.version>
+    <dynamisgpu.version>1.0.1</dynamisgpu.version>
+
+    <!-- LWJGL -->
+    <lwjgl.version>3.4.1</lwjgl.version>
+    <lwjgl.natives>natives-linux</lwjgl.natives>
+
+    <!-- Test -->
+    <junit.version>5.10.2</junit.version>
+
+    <!-- JMH -->
+    <jmh.version>1.37</jmh.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- Internal modules -->
+      <dependency>
+        <groupId>org.dynamissky</groupId>
+        <artifactId>dynamissky-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dynamissky</groupId>
+        <artifactId>dynamissky-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dynamissky</groupId>
+        <artifactId>dynamissky-vulkan</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dynamissky</groupId>
+        <artifactId>dynamissky-test</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- Ecosystem -->
+      <dependency>
+        <groupId>org.vectrix</groupId>
+        <artifactId>vectrix</artifactId>
+        <version>${vectrix.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dynamisgpu</groupId>
+        <artifactId>dynamis-gpu-api</artifactId>
+        <version>${dynamisgpu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dynamisgpu</groupId>
+        <artifactId>dynamis-gpu-vulkan</artifactId>
+        <version>${dynamisgpu.version}</version>
+      </dependency>
+
+      <!-- LWJGL BOM -->
+      <dependency>
+        <groupId>org.lwjgl</groupId>
+        <artifactId>lwjgl-bom</artifactId>
+        <version>${lwjgl.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- JUnit 5 -->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- JMH -->
+      <dependency>
+        <groupId>org.openjdk.jmh</groupId>
+        <artifactId>jmh-core</artifactId>
+        <version>${jmh.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openjdk.jmh</groupId>
+        <artifactId>jmh-generator-annprocess</artifactId>
+        <version>${jmh.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+          <configuration>
+            <source>21</source>
+            <target>21</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.2.5</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>
