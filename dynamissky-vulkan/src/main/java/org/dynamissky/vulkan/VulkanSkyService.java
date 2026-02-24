@@ -26,6 +26,11 @@ import org.dynamissky.vulkan.lut.SkyLutCache;
 import org.dynamissky.vulkan.lut.SkyLutResources;
 import org.dynamissky.vulkan.lut.SkyViewLutUpdater;
 import org.dynamissky.vulkan.lut.TransmittanceLutBaker;
+import org.dynamissky.vulkan.pass.HdriSkyPass;
+import org.dynamissky.vulkan.pass.SkyBackgroundPass;
+import org.dynamissky.vulkan.pass.SkyPassSelector;
+import org.dynamissky.vulkan.pass.SkyPassUbo;
+import org.vectrix.core.Matrix4f;
 import org.vectrix.core.Vector3f;
 
 /**
@@ -39,6 +44,9 @@ public final class VulkanSkyService implements SkyService {
     private final AerialPerspectiveLutUpdater aerialUpdater;
     private final SkyLutCache lutCache;
     private final TimeOfDayScheduler scheduler;
+    private final SkyBackgroundPass skyBackgroundPass;
+    private final HdriSkyPass hdriSkyPass;
+    private final SkyPassSelector skyPassSelector;
 
     private final LatLon latLon;
 
@@ -59,6 +67,9 @@ public final class VulkanSkyService implements SkyService {
             AerialPerspectiveLutUpdater aerialUpdater,
             SkyLutCache lutCache,
             TimeOfDayScheduler scheduler,
+            SkyBackgroundPass skyBackgroundPass,
+            HdriSkyPass hdriSkyPass,
+            SkyPassSelector skyPassSelector,
             LatLon latLon,
             SkyConfig config) {
         this.lutResources = lutResources;
@@ -68,6 +79,9 @@ public final class VulkanSkyService implements SkyService {
         this.aerialUpdater = aerialUpdater;
         this.lutCache = lutCache;
         this.scheduler = scheduler;
+        this.skyBackgroundPass = skyBackgroundPass;
+        this.hdriSkyPass = hdriSkyPass;
+        this.skyPassSelector = skyPassSelector;
         this.latLon = latLon;
 
         this.atmosphereConfig = config.atmosphere();
@@ -85,6 +99,10 @@ public final class VulkanSkyService implements SkyService {
 
     public static VulkanSkyService create(long device, GpuMemoryOps memoryOps, SkyConfig config) {
         SkyLutResources luts = SkyLutResources.create(memoryOps);
+        var descriptorSets = org.dynamissky.vulkan.descriptor.SkyDescriptorSets.create(luts);
+        SkyBackgroundPass backgroundPass = SkyBackgroundPass.create(device, 0L, luts, descriptorSets);
+        HdriSkyPass hdriPass = HdriSkyPass.create(device, 0L, memoryOps, descriptorSets);
+        SkyPassSelector selector = new SkyPassSelector(backgroundPass, hdriPass);
         return new VulkanSkyService(
                 luts,
                 TransmittanceLutBaker.create(device, memoryOps, luts),
@@ -97,6 +115,9 @@ public final class VulkanSkyService implements SkyService {
                         .timeZone(config.timeZoneHours())
                         .timeMultiplier(config.timeMultiplier())
                         .build(),
+                backgroundPass,
+                hdriPass,
+                selector,
                 new LatLon(config.latitudeDegrees(), config.longitudeDegrees()),
                 config);
     }
@@ -158,7 +179,28 @@ public final class VulkanSkyService implements SkyService {
         return bakeDispatchCount;
     }
 
+    public void recordBackground(long commandBuffer, Matrix4f invViewProj, int frameIndex) {
+        Vector3f sunDirection = new Vector3f(
+                sunState.direction().x(),
+                sunState.direction().y(),
+                sunState.direction().z());
+        SkyPassUbo ubo = SkyPassUbo.of(invViewProj, sunDirection);
+        skyPassSelector.record(
+                commandBuffer,
+                ubo,
+                skyDescriptor.model(),
+                (float) java.lang.Math.toRadians(skyDescriptor.hdriRotationDegrees()),
+                configHdriIntensity(),
+                frameIndex);
+    }
+
+    private float configHdriIntensity() {
+        return 1.0f;
+    }
+
     public void destroy() {
+        skyBackgroundPass.destroy();
+        hdriSkyPass.destroy();
         skyViewUpdater.destroy();
         aerialUpdater.destroy();
         transmittanceBaker.destroy();
