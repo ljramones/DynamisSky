@@ -14,6 +14,13 @@ public record WeatherState(
         float cloudCoverage) {
 
     public static final WeatherState CLEAR = builder().build();
+    public static final WeatherState HEAVY_RAIN = builder()
+            .windSpeedMetersPerSecond(12.0f)
+            .windDirection(new Vec3(0.7f, 0f, 0.7f))
+            .rainIntensity(1.0f)
+            .fogDensity(0.4f)
+            .cloudCoverage(1.0f)
+            .build();
 
     public WeatherState {
         if (windDirection == null) {

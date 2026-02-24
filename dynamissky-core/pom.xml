@@ -29,4 +29,26 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>--add-exports</arg>
+            <arg>org.vectrix/org.vectrix.color=org.dynamissky.core</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>--add-exports org.vectrix/org.vectrix.color=org.dynamissky.core</argLine>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
