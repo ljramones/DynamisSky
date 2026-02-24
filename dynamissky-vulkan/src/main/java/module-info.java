@@ -1,9 +1,12 @@
 module org.dynamissky.vulkan {
     requires org.dynamissky.api;
     requires org.dynamissky.core;
+    requires dynamis.gpu.vulkan;
+    requires org.lwjgl;
     requires org.lwjgl.vulkan;
 
     exports org.dynamissky.vulkan;
+    exports org.dynamissky.vulkan.descriptor;
     exports org.dynamissky.vulkan.lut;
     exports org.dynamissky.vulkan.pass;
     exports org.dynamissky.vulkan.stars;

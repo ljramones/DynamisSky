@@ -1,0 +1,52 @@
+#version 450
+layout(local_size_x=16, local_size_y=16) in;
+
+layout(set=0, binding=0, rgba16f) uniform image2D transmittanceLut;
+layout(set=0, binding=1, std140) uniform AtmosphereUBO {
+    vec3 rayleighScatter;
+    float rayleighHeight;
+    float mieScatter;
+    float mieAbsorb;
+    float mieHeight;
+    float mieAnisotropy;
+    vec3 ozoneAbsorb;
+    float _pad0;
+    float planetRadius;
+    float atmosphereHeight;
+    float ozoneCenter;
+    float ozoneWidth;
+} atmosphere;
+
+float densityAt(float altitudeKm, float scaleHeightKm) {
+    return exp(-max(0.0, altitudeKm) / max(scaleHeightKm, 0.001));
+}
+
+void main() {
+    ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 size = imageSize(transmittanceLut);
+    if (coord.x >= size.x || coord.y >= size.y) {
+        return;
+    }
+
+    vec2 uv = (vec2(coord) + 0.5) / vec2(size);
+    float altitudeKm = uv.y * atmosphere.atmosphereHeight;
+    float zenithCos = mix(-1.0, 1.0, uv.x);
+    float rayLength = atmosphere.atmosphereHeight / max(0.05, abs(zenithCos));
+
+    vec3 opticalDepth = vec3(0.0);
+    const int STEPS = 40;
+    for (int i = 0; i < STEPS; ++i) {
+        float t = (float(i) + 0.5) / float(STEPS);
+        float sampleAlt = altitudeKm + t * rayLength;
+        float rayleigh = densityAt(sampleAlt, atmosphere.rayleighHeight);
+        float mie = densityAt(sampleAlt, atmosphere.mieHeight);
+        float ozone = exp(-pow((sampleAlt - atmosphere.ozoneCenter) / max(atmosphere.ozoneWidth, 0.1), 2.0));
+        opticalDepth += atmosphere.rayleighScatter * rayleigh;
+        opticalDepth += vec3(atmosphere.mieScatter + atmosphere.mieAbsorb) * mie;
+        opticalDepth += atmosphere.ozoneAbsorb * ozone;
+    }
+    opticalDepth *= rayLength / float(STEPS);
+
+    vec3 transmittance = exp(-opticalDepth);
+    imageStore(transmittanceLut, coord, vec4(transmittance, 1.0));
+}
