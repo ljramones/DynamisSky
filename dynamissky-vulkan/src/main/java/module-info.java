@@ -1,6 +1,7 @@
 module org.dynamissky.vulkan {
     requires org.dynamissky.api;
     requires org.dynamissky.core;
+    requires org.vectrix;
     requires dynamis.gpu.vulkan;
     requires org.lwjgl;
     requires org.lwjgl.vulkan;

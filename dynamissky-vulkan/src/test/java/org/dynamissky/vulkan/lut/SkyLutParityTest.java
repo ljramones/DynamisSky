@@ -1,9 +1,14 @@
 package org.dynamissky.vulkan.lut;
 
 import org.dynamissky.api.config.AtmosphereConfig;
+import org.dynamissky.vulkan.SkyConfig;
+import org.dynamissky.vulkan.SkyFrameContext;
+import org.dynamissky.vulkan.VulkanSkyService;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkyLutParityTest {
@@ -44,24 +49,44 @@ class SkyLutParityTest {
     }
 
     @Test
-    void lutCachePreventsDuplicateBake() {
-        SkyLutCache cache = new SkyLutCache();
-        AtmosphereConfig base = AtmosphereConfig.EARTH_STANDARD;
+    void skyViewLutIsNonBlackAtZenith() {
+        Assumptions.assumeTrue(Boolean.getBoolean("dle.sky.parity.tests"));
 
-        assertTrue(cache.isDirty(base));
-        cache.markClean(base);
-        assertTrue(!cache.isDirty(base));
+        VulkanSkyService service = VulkanSkyService.create(0L, new FakeGpuMemoryOps(), SkyConfig.builder().build());
+        service.update(SkyFrameContext.of(0L, CameraState.defaultState(), 0, 1f));
 
-        AtmosphereConfig modified = new AtmosphereConfig(
-                base.planetRadiusKm(),
-                base.atmosphereRadiusKm(),
-                base.rayleighScaleHeightKm() + 0.2f,
-                base.mieScaleHeightKm(),
-                base.mieAnisotropyG(),
-                base.ozoneLayerCenterKm(),
-                base.ozoneLayerWidthKm());
-        assertTrue(cache.isDirty(modified));
-        cache.markClean(modified);
-        assertTrue(!cache.isDirty(modified));
+        float[] rgba = SkyLutReadbackRegistry.readCenterPixel(service.gpuResources().skyViewLut().handle());
+        assertTrue(rgba[0] + rgba[1] + rgba[2] > 0.1f);
+    }
+
+    @Test
+    void aerialPerspectiveLutIsNonZero() {
+        Assumptions.assumeTrue(Boolean.getBoolean("dle.sky.parity.tests"));
+
+        VulkanSkyService service = VulkanSkyService.create(0L, new FakeGpuMemoryOps(), SkyConfig.builder().build());
+        service.update(SkyFrameContext.of(0L, CameraState.defaultState(), 0, 1f));
+
+        float[] rgba = SkyLutReadbackRegistry.readCenterPixel(service.gpuResources().aerialPerspectiveLut().handle());
+        assertTrue(rgba[3] > 0.0f);
+        assertTrue(rgba[3] <= 1.0f);
+    }
+
+    @Test
+    void updateRunsBakeOnFirstCall() {
+        VulkanSkyService service = VulkanSkyService.create(0L, new FakeGpuMemoryOps(), SkyConfig.builder().build());
+        service.update(SkyFrameContext.of(0L, CameraState.defaultState(), 0, 1f));
+
+        assertFalse(service.isLutCacheDirty());
+    }
+
+    @Test
+    void updateSkipsBakeOnSubsequentCalls() {
+        VulkanSkyService service = VulkanSkyService.create(0L, new FakeGpuMemoryOps(), SkyConfig.builder().build());
+
+        service.update(SkyFrameContext.of(0L, CameraState.defaultState(), 0, 1f));
+        service.update(SkyFrameContext.of(0L, CameraState.defaultState(), 1, 1f));
+        service.update(SkyFrameContext.of(0L, CameraState.defaultState(), 2, 1f));
+
+        assertEquals(1, service.bakeDispatchCount());
     }
 }

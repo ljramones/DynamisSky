@@ -1,0 +1,52 @@
+#version 450
+layout(local_size_x=8, local_size_y=8, local_size_z=1) in;
+
+layout(set=0, binding=0, rgba16f) uniform image3D aerialPerspectiveLut;
+layout(set=0, binding=1) uniform sampler2D transmittanceLut;
+layout(set=0, binding=2, std140) uniform AerialUBO {
+    vec3 sunDirection;
+    float sunIntensity;
+    vec3 cameraPosition;
+    float nearPlane;
+    vec4 frustumCornerTL;
+    vec4 frustumCornerTR;
+    vec4 frustumCornerBL;
+    float farPlane;
+    float pad0;
+    float pad1;
+    float pad2;
+} params;
+
+vec3 interpolateFrustumRay(vec2 uv) {
+    vec3 top = mix(params.frustumCornerTL.xyz, params.frustumCornerTR.xyz, uv.x);
+    vec3 bottom = params.frustumCornerBL.xyz;
+    return normalize(mix(bottom, top, uv.y));
+}
+
+void main() {
+    ivec3 coord = ivec3(gl_GlobalInvocationID.xyz);
+    ivec3 size = imageSize(aerialPerspectiveLut);
+    if (coord.x >= size.x || coord.y >= size.y || coord.z >= size.z) {
+        return;
+    }
+
+    vec3 uvw = (vec3(coord) + 0.5) / vec3(size);
+    float depth = mix(params.nearPlane, params.farPlane, uvw.z * uvw.z);
+    vec3 ray = interpolateFrustumRay(uvw.xy);
+
+    vec3 accumScatter = vec3(0.0);
+    float transmittance = 1.0;
+    const int STEPS = 32;
+    for (int i = 0; i < STEPS; ++i) {
+        float t = (float(i) + 0.5) / float(STEPS);
+        vec2 lutUv = vec2(t, clamp(0.5 + 0.5 * ray.y, 0.0, 1.0));
+        vec3 trans = texture(transmittanceLut, lutUv).rgb;
+        float localExtinction = 1.0 - clamp((trans.r + trans.g + trans.b) / 3.0, 0.0, 1.0);
+        float phase = 0.5 + 0.5 * dot(ray, normalize(params.sunDirection));
+        accumScatter += vec3(0.6, 0.7, 0.9) * localExtinction * phase;
+        transmittance *= (1.0 - localExtinction * 0.03);
+    }
+
+    vec3 inscatter = accumScatter * (params.sunIntensity / float(STEPS));
+    imageStore(aerialPerspectiveLut, coord, vec4(max(inscatter, vec3(0.0)), clamp(transmittance, 0.0, 1.0)));
+}
