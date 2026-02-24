@@ -64,6 +64,7 @@ public final class VulkanSkyService implements SkyService {
     private MoonState moonState;
     private TimeOfDayState timeOfDayState;
     private int bakeDispatchCount;
+    private String loadedHdriPath;
 
     private VulkanSkyService(
             SkyLutResources lutResources,
@@ -274,9 +275,20 @@ public final class VulkanSkyService implements SkyService {
 
     @Override
     public void applySkyDescriptor(SkyDescriptor descriptor) {
+        setSkyDescriptor(descriptor);
+    }
+
+    public void setSkyDescriptor(SkyDescriptor descriptor) {
         this.skyDescriptor = descriptor;
         this.atmosphereConfig = descriptor.atmosphere();
         this.weatherState = descriptor.weather();
+
+        if (descriptor.model() == SkyModelType.HDRI && descriptor.hdriPath() != null) {
+            if (!descriptor.hdriPath().equals(loadedHdriPath)) {
+                hdriSkyPass.loadHdri(descriptor.hdriPath(), 0L);
+                loadedHdriPath = descriptor.hdriPath();
+            }
+        }
     }
 
     @Override
