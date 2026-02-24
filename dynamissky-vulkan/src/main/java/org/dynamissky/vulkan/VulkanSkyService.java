@@ -14,6 +14,7 @@ import org.dynamissky.api.state.WeatherState;
 import org.dynamissky.core.SkyTypeAdapters;
 import org.dynamissky.core.color.KelvinToRgb;
 import org.dynamissky.core.scheduler.TimeOfDayScheduler;
+import org.dynamissky.core.stars.StarCatalog;
 import org.dynamissky.core.solar.JulianDate;
 import org.dynamissky.core.solar.LatLon;
 import org.dynamissky.core.solar.SolarPosition;
@@ -30,6 +31,9 @@ import org.dynamissky.vulkan.pass.HdriSkyPass;
 import org.dynamissky.vulkan.pass.SkyBackgroundPass;
 import org.dynamissky.vulkan.pass.SkyPassSelector;
 import org.dynamissky.vulkan.pass.SkyPassUbo;
+import org.dynamissky.vulkan.moon.MoonBillboardRenderer;
+import org.dynamissky.vulkan.stars.StarFieldRenderer;
+import org.dynamissky.vulkan.stars.StarPassUbo;
 import org.vectrix.core.Matrix4f;
 import org.vectrix.core.Vector3f;
 
@@ -47,6 +51,8 @@ public final class VulkanSkyService implements SkyService {
     private final SkyBackgroundPass skyBackgroundPass;
     private final HdriSkyPass hdriSkyPass;
     private final SkyPassSelector skyPassSelector;
+    private final StarFieldRenderer starFieldRenderer;
+    private final MoonBillboardRenderer moonBillboardRenderer;
 
     private final LatLon latLon;
 
@@ -70,6 +76,8 @@ public final class VulkanSkyService implements SkyService {
             SkyBackgroundPass skyBackgroundPass,
             HdriSkyPass hdriSkyPass,
             SkyPassSelector skyPassSelector,
+            StarFieldRenderer starFieldRenderer,
+            MoonBillboardRenderer moonBillboardRenderer,
             LatLon latLon,
             SkyConfig config) {
         this.lutResources = lutResources;
@@ -82,6 +90,8 @@ public final class VulkanSkyService implements SkyService {
         this.skyBackgroundPass = skyBackgroundPass;
         this.hdriSkyPass = hdriSkyPass;
         this.skyPassSelector = skyPassSelector;
+        this.starFieldRenderer = starFieldRenderer;
+        this.moonBillboardRenderer = moonBillboardRenderer;
         this.latLon = latLon;
 
         this.atmosphereConfig = config.atmosphere();
@@ -103,6 +113,9 @@ public final class VulkanSkyService implements SkyService {
         SkyBackgroundPass backgroundPass = SkyBackgroundPass.create(device, 0L, luts, descriptorSets);
         HdriSkyPass hdriPass = HdriSkyPass.create(device, 0L, memoryOps, descriptorSets);
         SkyPassSelector selector = new SkyPassSelector(backgroundPass, hdriPass);
+        StarFieldRenderer starRenderer = StarFieldRenderer.create(device, 0L, memoryOps);
+        MoonBillboardRenderer moonRenderer = MoonBillboardRenderer.create(device, 0L, memoryOps, 0L, 0L);
+        starRenderer.uploadCatalog(new StarCatalog(9100), 0L);
         return new VulkanSkyService(
                 luts,
                 TransmittanceLutBaker.create(device, memoryOps, luts),
@@ -118,6 +131,8 @@ public final class VulkanSkyService implements SkyService {
                 backgroundPass,
                 hdriPass,
                 selector,
+                starRenderer,
+                moonRenderer,
                 new LatLon(config.latitudeDegrees(), config.longitudeDegrees()),
                 config);
     }
@@ -198,7 +213,16 @@ public final class VulkanSkyService implements SkyService {
         return 1.0f;
     }
 
+    public void recordCelestial(long commandBuffer, Matrix4f viewProj, int frameIndex) {
+        float starVisibility = TimeOfDayScheduler.starVisibilityForSunAltitude(sunState.altitudeDegrees());
+        StarPassUbo starUbo = StarPassUbo.of(viewProj, starVisibility, (float) timeOfDayState.localTimeHours(), 0.05f);
+        starFieldRenderer.record(commandBuffer, starUbo, starVisibility, frameIndex);
+        moonBillboardRenderer.record(commandBuffer, moonState, sunState, viewProj, frameIndex);
+    }
+
     public void destroy() {
+        starFieldRenderer.destroy();
+        moonBillboardRenderer.destroy();
         skyBackgroundPass.destroy();
         hdriSkyPass.destroy();
         skyViewUpdater.destroy();
