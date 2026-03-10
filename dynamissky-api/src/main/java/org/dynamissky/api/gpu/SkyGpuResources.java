@@ -8,6 +8,7 @@ public record SkyGpuResources(
         GpuImage2D multiScatteringLut,
         GpuImage2D skyViewLut,
         GpuImage3D aerialPerspectiveLut,
+        @Deprecated(since = "0.1.0")
         long starFieldVertexBufferHandle) {
 
     public static final SkyGpuResources NULL = new SkyGpuResources(
@@ -21,5 +22,12 @@ public record SkyGpuResources(
         if (transmittanceLut == null || multiScatteringLut == null || skyViewLut == null || aerialPerspectiveLut == null) {
             throw new IllegalArgumentException("all LUT resources are required");
         }
+    }
+
+    /**
+     * Preferred typed star-field vertex buffer reference path.
+     */
+    public SkyGpuBufferRef starFieldVertexBufferRef() {
+        return new SkyGpuBufferRef(this.starFieldVertexBufferHandle);
     }
 }
