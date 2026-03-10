@@ -19,6 +19,8 @@ import org.dynamissky.core.solar.JulianDate;
 import org.dynamissky.core.solar.LatLon;
 import org.dynamissky.core.solar.SolarPosition;
 import org.dynamissky.core.solar.SolarPositionCalculator;
+import org.dynamissky.vulkan.internal.gpu.NoopSkyGpuBackendAdapter;
+import org.dynamissky.vulkan.internal.gpu.SkyGpuBackendAdapter;
 import org.dynamissky.vulkan.lut.AerialPerspectiveLutUpdater;
 import org.dynamissky.vulkan.lut.CameraState;
 import org.dynamissky.vulkan.lut.GpuMemoryOps;
@@ -53,6 +55,7 @@ public final class VulkanSkyService implements SkyService {
     private final SkyPassSelector skyPassSelector;
     private final StarFieldRenderer starFieldRenderer;
     private final MoonBillboardRenderer moonBillboardRenderer;
+    private final SkyGpuBackendAdapter gpuBackendAdapter;
 
     private final LatLon latLon;
 
@@ -80,7 +83,8 @@ public final class VulkanSkyService implements SkyService {
             StarFieldRenderer starFieldRenderer,
             MoonBillboardRenderer moonBillboardRenderer,
             LatLon latLon,
-            SkyConfig config) {
+            SkyConfig config,
+            SkyGpuBackendAdapter gpuBackendAdapter) {
         this.lutResources = lutResources;
         this.transmittanceBaker = transmittanceBaker;
         this.multiScatterBaker = multiScatterBaker;
@@ -94,6 +98,7 @@ public final class VulkanSkyService implements SkyService {
         this.starFieldRenderer = starFieldRenderer;
         this.moonBillboardRenderer = moonBillboardRenderer;
         this.latLon = latLon;
+        this.gpuBackendAdapter = gpuBackendAdapter == null ? new NoopSkyGpuBackendAdapter() : gpuBackendAdapter;
 
         this.atmosphereConfig = config.atmosphere();
         this.weatherState = WeatherState.CLEAR;
@@ -109,6 +114,10 @@ public final class VulkanSkyService implements SkyService {
     }
 
     public static VulkanSkyService create(long device, GpuMemoryOps memoryOps, SkyConfig config) {
+        return create(device, memoryOps, config, new NoopSkyGpuBackendAdapter());
+    }
+
+    static VulkanSkyService create(long device, GpuMemoryOps memoryOps, SkyConfig config, SkyGpuBackendAdapter gpuBackendAdapter) {
         SkyLutResources luts = SkyLutResources.create(memoryOps);
         var descriptorSets = org.dynamissky.vulkan.descriptor.SkyDescriptorSets.create(luts);
         SkyBackgroundPass backgroundPass = SkyBackgroundPass.create(device, 0L, luts, descriptorSets);
@@ -135,10 +144,12 @@ public final class VulkanSkyService implements SkyService {
                 starRenderer,
                 moonRenderer,
                 new LatLon(config.latitudeDegrees(), config.longitudeDegrees()),
-                config);
+                config,
+                gpuBackendAdapter);
     }
 
     public void update(SkyFrameContext ctx) {
+        gpuBackendAdapter.prepareFrame(ctx);
         SolarPosition solar = SolarPositionCalculator.compute(
                 new JulianDate(timeOfDayState.julianDate()),
                 latLon,
@@ -184,7 +195,7 @@ public final class VulkanSkyService implements SkyService {
     }
 
     private void transitionToShaderRead(long imageHandle) {
-        // Barrier chain integration happens in renderer command recorder phase.
+        gpuBackendAdapter.transitionToShaderRead(imageHandle);
     }
 
     public boolean isLutCacheDirty() {
