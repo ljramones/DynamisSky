@@ -10,6 +10,9 @@ import org.dynamissky.vulkan.SkyConfig;
 import org.dynamissky.vulkan.VulkanSkyService;
 import org.dynamissky.vulkan.lut.CameraState;
 import org.dynamissky.vulkan.lut.GpuMemoryOps;
+import org.dynamissky.vulkan.lut.LwjglGpuMemoryOps;
+import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.vectrix.core.Matrix4f;
 
 /**
@@ -31,6 +34,18 @@ public final class VulkanSkyIntegration {
         return new VulkanSkyIntegration(VulkanSkyService.create(device, memoryOps, config));
     }
 
+    /**
+     * Convenience creation path for LightEngine runtime bridges that should avoid direct LUT class coupling.
+     */
+    public static VulkanSkyIntegration createWithLwjglDevices(VkDevice device,
+                                                               VkPhysicalDevice physicalDevice,
+                                                               long renderPass,
+                                                               long bindlessHeap,
+                                                               SkyConfig config) {
+        GpuMemoryOps memoryOps = new LwjglGpuMemoryOps(device, physicalDevice);
+        return create(device.address(), renderPass, memoryOps, bindlessHeap, config);
+    }
+
     public void update(long commandBuffer,
                        CameraState camera,
                        float deltaSeconds,
@@ -38,6 +53,15 @@ public final class VulkanSkyIntegration {
         phase = SkyRenderPhase.NOT_STARTED;
         skyService.update(org.dynamissky.vulkan.SkyFrameContext.of(commandBuffer, camera, frameIndex, deltaSeconds));
         phase = SkyRenderPhase.UPDATE_COMPLETE;
+    }
+
+    /**
+     * LightEngine compatibility helper that keeps camera construction inside sky integration boundaries.
+     */
+    public void updateDefaultCamera(long commandBuffer,
+                                    float deltaSeconds,
+                                    int frameIndex) {
+        update(commandBuffer, CameraState.defaultState(), deltaSeconds, frameIndex);
     }
 
     public void recordBackground(long commandBuffer,
