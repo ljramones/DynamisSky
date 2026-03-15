@@ -1,13 +1,13 @@
-module org.dynamissky.core {
-    requires org.dynamissky.api;
+module org.dynamisengine.sky.core {
+    requires org.dynamisengine.sky.api;
     requires org.vectrix;
 
-    exports org.dynamissky.core;
-    exports org.dynamissky.core.solar;
-    exports org.dynamissky.core.model;
-    exports org.dynamissky.core.color;
-    exports org.dynamissky.core.scheduler;
-    exports org.dynamissky.core.stars;
-    exports org.dynamissky.core.builder;
-    exports org.dynamissky.core.noise;
+    exports org.dynamisengine.sky.core;
+    exports org.dynamisengine.sky.core.solar;
+    exports org.dynamisengine.sky.core.model;
+    exports org.dynamisengine.sky.core.color;
+    exports org.dynamisengine.sky.core.scheduler;
+    exports org.dynamisengine.sky.core.stars;
+    exports org.dynamisengine.sky.core.builder;
+    exports org.dynamisengine.sky.core.noise;
 }

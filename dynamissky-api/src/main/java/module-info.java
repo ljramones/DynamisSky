@@ -1,8 +1,8 @@
-module org.dynamissky.api {
-    exports org.dynamissky.api;
-    exports org.dynamissky.api.service;
-    exports org.dynamissky.api.state;
-    exports org.dynamissky.api.descriptor;
-    exports org.dynamissky.api.config;
-    exports org.dynamissky.api.gpu;
+module org.dynamisengine.sky.api {
+    exports org.dynamisengine.sky.api;
+    exports org.dynamisengine.sky.api.service;
+    exports org.dynamisengine.sky.api.state;
+    exports org.dynamisengine.sky.api.descriptor;
+    exports org.dynamisengine.sky.api.config;
+    exports org.dynamisengine.sky.api.gpu;
 }

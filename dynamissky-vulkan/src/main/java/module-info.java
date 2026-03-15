@@ -1,13 +1,13 @@
-module org.dynamissky.vulkan {
-    requires org.dynamissky.api;
-    requires org.dynamissky.core;
+module org.dynamisengine.sky.vulkan {
+    requires org.dynamisengine.sky.api;
+    requires org.dynamisengine.sky.core;
     requires org.vectrix;
     requires dynamis.gpu.vulkan;
     requires org.lwjgl;
     requires org.lwjgl.vulkan;
 
-    exports org.dynamissky.vulkan;
-    exports org.dynamissky.vulkan.lut;
-    exports org.dynamissky.vulkan.stars;
-    exports org.dynamissky.vulkan.integration;
+    exports org.dynamisengine.sky.vulkan;
+    exports org.dynamisengine.sky.vulkan.lut;
+    exports org.dynamisengine.sky.vulkan.stars;
+    exports org.dynamisengine.sky.vulkan.integration;
 }

@@ -88,14 +88,14 @@ Per-frame GPU cost at 1080p: **~0.3ms** (SkyView + AerialPerspective dispatches 
 ```xml
 <!-- API only — safe for game logic modules -->
 <dependency>
-    <groupId>org.dynamissky</groupId>
+    <groupId>org.dynamisengine.sky</groupId>
     <artifactId>dynamissky-api</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
 
 <!-- Vulkan implementation — engine-impl-vulkan only -->
 <dependency>
-    <groupId>org.dynamissky</groupId>
+    <groupId>org.dynamisengine.sky</groupId>
     <artifactId>dynamissky-vulkan</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>

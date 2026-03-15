@@ -1,9 +1,9 @@
-module org.dynamissky.test {
-    requires org.dynamissky.api;
+module org.dynamisengine.sky.test {
+    requires org.dynamisengine.sky.api;
     requires org.junit.jupiter.api;
 
-    exports org.dynamissky.test;
-    exports org.dynamissky.test.mock;
-    exports org.dynamissky.test.harness;
-    exports org.dynamissky.test.assertions;
+    exports org.dynamisengine.sky.test;
+    exports org.dynamisengine.sky.test.mock;
+    exports org.dynamisengine.sky.test.harness;
+    exports org.dynamisengine.sky.test.assertions;
 }
