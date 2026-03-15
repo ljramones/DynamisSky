@@ -1,7 +1,7 @@
 package org.dynamisengine.sky.vulkan.lut;
 
 import org.dynamisengine.gpu.vulkan.memory.VulkanImageAlloc;
-import org.dynamisengine.gpu.vulkan.memory.VulkanMemoryOps;
+import org.dynamisengine.gpu.vulkan.memory.VulkanImageOps;
 import org.dynamisengine.sky.api.gpu.GpuImage2D;
 import org.dynamisengine.sky.api.gpu.GpuImage3D;
 import org.lwjgl.system.MemoryStack;
@@ -30,7 +30,7 @@ public final class LwjglGpuMemoryOps implements GpuMemoryOps {
     @Override
     public GpuImage2DAlloc createImage2D(int width, int height, int format) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VulkanImageAlloc alloc = VulkanMemoryOps.createImage(
+            VulkanImageAlloc alloc = VulkanImageOps.createImage(
                     device,
                     physicalDevice,
                     stack,
@@ -50,7 +50,7 @@ public final class LwjglGpuMemoryOps implements GpuMemoryOps {
     @Override
     public GpuImage3DAlloc createImage3D(int width, int height, int depth, int format) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VulkanImageAlloc alloc = VulkanMemoryOps.createImage(
+            VulkanImageAlloc alloc = VulkanImageOps.createImage(
                     device,
                     physicalDevice,
                     stack,
