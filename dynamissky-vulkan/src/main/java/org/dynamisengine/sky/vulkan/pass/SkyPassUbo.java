@@ -1,7 +1,7 @@
 package org.dynamisengine.sky.vulkan.pass;
 
-import org.vectrix.core.Matrix4f;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

@@ -1,8 +1,8 @@
 package org.dynamisengine.sky.core.model;
 
 import org.junit.jupiter.api.Test;
-import org.vectrix.color.ColorSciencef;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.color.ColorSciencef;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

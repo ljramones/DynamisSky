@@ -4,7 +4,7 @@ import org.dynamisengine.sky.api.config.AtmosphereConfig;
 import org.dynamisengine.sky.api.state.SunState;
 import org.dynamisengine.sky.api.ColorRgb;
 import org.dynamisengine.sky.api.Vec3;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Shared immutable benchmark fixtures.

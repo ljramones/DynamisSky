@@ -1,8 +1,8 @@
 package org.dynamisengine.sky.vulkan.integration;
 
 import org.dynamisengine.sky.api.state.SunState;
-import org.vectrix.core.Matrix4f;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Converts SunState to DLE directional light data.

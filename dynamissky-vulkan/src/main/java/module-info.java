@@ -1,7 +1,7 @@
 module org.dynamisengine.sky.vulkan {
     requires org.dynamisengine.sky.api;
     requires org.dynamisengine.sky.core;
-    requires org.vectrix;
+    requires org.dynamisengine.vectrix;
     requires dynamis.gpu.vulkan;
     requires org.lwjgl;
     requires org.lwjgl.vulkan;

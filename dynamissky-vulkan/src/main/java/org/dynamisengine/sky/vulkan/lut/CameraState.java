@@ -1,6 +1,6 @@
 package org.dynamisengine.sky.vulkan.lut;
 
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Lightweight camera state for sky per-frame compute passes.

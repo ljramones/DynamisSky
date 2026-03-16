@@ -12,7 +12,7 @@ import org.dynamisengine.sky.api.state.SunState;
 import org.dynamisengine.sky.api.state.TimeOfDayState;
 import org.dynamisengine.sky.api.state.WeatherState;
 import org.dynamisengine.sky.core.SkyTypeAdapters;
-import org.dynamisengine.sky.core.color.KelvinToRgb;
+import org.dynamisengine.vectrix.color.ColorSciencef;
 import org.dynamisengine.sky.core.scheduler.TimeOfDayScheduler;
 import org.dynamisengine.sky.core.stars.StarCatalog;
 import org.dynamisengine.sky.core.solar.JulianDate;
@@ -36,8 +36,8 @@ import org.dynamisengine.sky.vulkan.pass.SkyPassUbo;
 import org.dynamisengine.sky.vulkan.moon.MoonBillboardRenderer;
 import org.dynamisengine.sky.vulkan.stars.StarFieldRenderer;
 import org.dynamisengine.sky.vulkan.stars.StarPassUbo;
-import org.vectrix.core.Matrix4f;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Top-level Vulkan-backed sky service coordinating LUT bake and per-frame updates.
@@ -159,7 +159,7 @@ public final class VulkanSkyService implements SkyService {
         solar = SolarPositionCalculator.compute(timeOfDayState.julianDate(), latLon);
 
         Vector3f sunDir = solar.toWorldDirection(new Vector3f(0f, 0f, -1f));
-        Vector3f sunColorLinear = KelvinToRgb.toLinearRgb(timeOfDayState.colorTemperatureKelvin(), new Vector3f());
+        Vector3f sunColorLinear = ColorSciencef.kelvinToLinearRgb(timeOfDayState.colorTemperatureKelvin(), new Vector3f());
         float sunIntensity = (float) java.lang.Math.max(0.05, java.lang.Math.sin(java.lang.Math.toRadians(solar.altitudeDegrees())) + 0.1);
 
         sunState = new SunState(

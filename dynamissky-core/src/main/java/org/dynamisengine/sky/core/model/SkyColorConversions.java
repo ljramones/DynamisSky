@@ -1,8 +1,8 @@
 package org.dynamisengine.sky.core.model;
 
-import org.vectrix.color.ColorMathf;
-import org.vectrix.color.ColorSciencef;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.color.ColorMathf;
+import org.dynamisengine.vectrix.color.ColorSciencef;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Color conversion helpers for analytical sky models.

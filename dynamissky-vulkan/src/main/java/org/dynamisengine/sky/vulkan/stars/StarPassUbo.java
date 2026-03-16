@@ -1,6 +1,6 @@
 package org.dynamisengine.sky.vulkan.stars;
 
-import org.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Matrix4f;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

@@ -1,6 +1,6 @@
 package org.dynamisengine.sky.bench.core;
 
-import org.dynamisengine.sky.core.color.KelvinToRgb;
+import org.dynamisengine.vectrix.color.ColorSciencef;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -9,7 +9,7 @@ import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,7 @@ public class KelvinToRgbBenchmark {
 
     @Benchmark
     public Vector3f convert(Blackhole bh) {
-        Vector3f result = KelvinToRgb.toLinearRgb(kelvin, scratch);
+        Vector3f result = ColorSciencef.kelvinToLinearRgb(kelvin, scratch);
         bh.consume(result);
         return result;
     }

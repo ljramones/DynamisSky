@@ -1,7 +1,7 @@
 package org.dynamisengine.sky.core.model;
 
 import org.dynamisengine.sky.core.model.hosek.HosekWilkieData;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Hosek-Wilkie-inspired approximation with embedded coefficients.

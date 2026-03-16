@@ -3,7 +3,7 @@ package org.dynamisengine.sky.vulkan.moon;
 import org.dynamisengine.sky.api.state.MoonState;
 import org.dynamisengine.sky.api.state.SunState;
 import org.dynamisengine.sky.vulkan.lut.GpuMemoryOps;
-import org.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Matrix4f;
 
 import java.util.concurrent.atomic.AtomicLong;
 

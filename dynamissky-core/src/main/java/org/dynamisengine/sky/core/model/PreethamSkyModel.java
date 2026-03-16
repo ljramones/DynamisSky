@@ -1,6 +1,6 @@
 package org.dynamisengine.sky.core.model;
 
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Lightweight Preetham-style approximation with xyY output.

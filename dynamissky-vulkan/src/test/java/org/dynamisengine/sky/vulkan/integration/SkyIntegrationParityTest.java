@@ -8,8 +8,8 @@ import org.dynamisengine.sky.vulkan.lut.GpuImage2DAlloc;
 import org.dynamisengine.sky.vulkan.lut.GpuImage3DAlloc;
 import org.dynamisengine.sky.vulkan.lut.GpuMemoryOps;
 import org.junit.jupiter.api.Test;
-import org.vectrix.core.Matrix4f;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;

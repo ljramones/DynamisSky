@@ -3,7 +3,7 @@ module org.dynamisengine.sky.bench {
     requires org.dynamisengine.sky.core;
     requires org.dynamisengine.sky.vulkan;
     requires org.dynamisengine.sky.test;
-    requires org.vectrix;
+    requires org.dynamisengine.vectrix;
     requires jmh.core;
 
     exports org.dynamisengine.sky.bench;

@@ -2,7 +2,7 @@ package org.dynamisengine.sky.core;
 
 import org.dynamisengine.sky.api.ColorRgb;
 import org.dynamisengine.sky.api.Vec3;
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Boundary adapters between API transfer types and Vectrix math types.

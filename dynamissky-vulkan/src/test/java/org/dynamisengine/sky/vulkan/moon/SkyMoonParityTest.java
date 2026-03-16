@@ -6,7 +6,7 @@ import org.dynamisengine.sky.api.state.MoonState;
 import org.dynamisengine.sky.api.state.SunState;
 import org.dynamisengine.sky.vulkan.lut.GpuMemoryOps;
 import org.junit.jupiter.api.Test;
-import org.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Matrix4f;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

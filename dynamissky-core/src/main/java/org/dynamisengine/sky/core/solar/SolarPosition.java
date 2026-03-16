@@ -1,6 +1,6 @@
 package org.dynamisengine.sky.core.solar;
 
-import org.vectrix.core.Vector3f;
+import org.dynamisengine.vectrix.core.Vector3f;
 
 /**
  * Solar azimuth/altitude in degrees.

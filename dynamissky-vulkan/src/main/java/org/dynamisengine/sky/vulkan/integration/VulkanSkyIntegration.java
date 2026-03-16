@@ -13,7 +13,7 @@ import org.dynamisengine.sky.vulkan.lut.GpuMemoryOps;
 import org.dynamisengine.sky.vulkan.lut.LwjglGpuMemoryOps;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
-import org.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Matrix4f;
 
 /**
  * DLE-facing sky integration facade.

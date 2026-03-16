@@ -7,7 +7,7 @@ import org.dynamisengine.sky.vulkan.lut.GpuImage2DAlloc;
 import org.dynamisengine.sky.vulkan.lut.GpuImage3DAlloc;
 import org.dynamisengine.sky.vulkan.lut.GpuMemoryOps;
 import org.junit.jupiter.api.Test;
-import org.vectrix.core.Matrix4f;
+import org.dynamisengine.vectrix.core.Matrix4f;
 
 import java.util.concurrent.atomic.AtomicLong;
 
