@@ -46,6 +46,7 @@ public final class VulkanSkyIntegration {
         return create(device.address(), renderPass, memoryOps, bindlessHeap, config);
     }
 
+
     public void update(long commandBuffer,
                        CameraState camera,
                        float deltaSeconds,

@@ -35,6 +35,11 @@
       <artifactId>lwjgl-vulkan</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.dynamisengine.light</groupId>
+      <artifactId>engine-impl-common</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.dynamisengine.sky</groupId>
       <artifactId>dynamissky-test</artifactId>
       <scope>test</scope>
