@@ -39,9 +39,14 @@ public final class SkyRenderBridgeProvider implements SkyRenderBridge {
                                 float[] invViewProjMatrix, float[] viewProjMatrix) {
         if (integration == null) return;
 
-        integration.updateDefaultCamera(commandBuffer, deltaTime, frameIndex);
-        integration.recordBackground(commandBuffer, arrayToMatrix(invViewProjMatrix), frameIndex);
-        integration.recordCelestial(commandBuffer, arrayToMatrix(viewProjMatrix), frameIndex);
+        try {
+            integration.updateDefaultCamera(commandBuffer, deltaTime, frameIndex);
+            integration.recordBackground(commandBuffer, arrayToMatrix(invViewProjMatrix), frameIndex);
+            integration.recordCelestial(commandBuffer, arrayToMatrix(viewProjMatrix), frameIndex);
+        } catch (Throwable t) {
+            // Sky rendering failed — disable to avoid repeated crashes
+            integration = null;
+        }
     }
 
     @Override
